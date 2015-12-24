@@ -1,5 +1,6 @@
 package planner.model;
 
+import com.lynden.gmapsfx.javascript.object.LatLong;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -12,17 +13,17 @@ import javafx.beans.property.StringProperty;
  */
 public class Stop {
     private StringProperty name;
-    private ObjectProperty<Coords> stopCoords;
+    private ObjectProperty<LatLong> stopCoords;
     private StringProperty description;
 
     public Stop() {
         this(null, null, null);
     }
 
-    public Stop(String sName, Coords stopCoords, String sDescription) {
+    public Stop(String sName, LatLong stopCoords, String sDescription) {
         this.name = new SimpleStringProperty(sName);
         this.description = new SimpleStringProperty(sDescription);
-        this.stopCoords = new SimpleObjectProperty<Coords>(stopCoords);
+        this.stopCoords = new SimpleObjectProperty<LatLong>(stopCoords);
     }
 
     public String getName() {
@@ -37,15 +38,15 @@ public class Stop {
         this.name.set(name);
     }
 
-    public Coords getStopCoords() {
+    public LatLong getStopCoords() {
         return stopCoords.get();
     }
 
-    public ObjectProperty<Coords> stopCoordsProperty() {
+    public ObjectProperty<LatLong> stopCoordsProperty() {
         return stopCoords;
     }
 
-    public void setStopCoords(Coords stopCoords) {
+    public void setStopCoords(LatLong stopCoords) {
         this.stopCoords.set(stopCoords);
     }
 
