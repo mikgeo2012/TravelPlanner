@@ -3,6 +3,8 @@ package planner.view;
 import com.lynden.gmapsfx.GoogleMapView;
 import com.lynden.gmapsfx.MapComponentInitializedListener;
 import com.lynden.gmapsfx.javascript.object.*;
+import com.lynden.gmapsfx.shapes.Polyline;
+import com.lynden.gmapsfx.shapes.PolylineOptions;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -35,6 +37,8 @@ public class ItineraryController implements Initializable, MapComponentInitializ
     private MainApp mainApp;
 
     private ObservableList<Stop> stopData;
+
+    private ObservableList<Marker> stopMarkers;
 
     /**
      * The constructor.
@@ -101,20 +105,35 @@ public class ItineraryController implements Initializable, MapComponentInitializ
 
         map = mapView.createMap(mapOptions);
 
-
         // Add Stop markers to map
         for (Stop s : stopData) {
             MarkerOptions markerOptions = new MarkerOptions();
 
-            markerOptions.position( s.getStopCoords().makeLatLong() )
+            markerOptions.position(s.getStopCoords().makeLatLong())
                     .visible(Boolean.TRUE)
                     .title(s.getName());
 
             Marker marker = new Marker( markerOptions );
 
             map.addMarker(marker);
+
         }
 
+        // Add travel lines to stops
+        for (int i = 1; i < stopData.size(); i++) {
+            Stop stop1 = stopData.get(i - 1);
+            Stop stop2 = stopData.get(i);
+            LatLong[] ary = new LatLong[]{stop1.getStopCoords().makeLatLong(), stop2.getStopCoords().makeLatLong()};
+            MVCArray mvc = new MVCArray(ary);
+
+            PolylineOptions polyOpts = new PolylineOptions()
+                    .path(mvc)
+                    .strokeColor("red")
+                    .strokeWeight(3);
+
+            Polyline poly = new Polyline(polyOpts);
+            map.addMapShape(poly);
+        }
 
     }
 
