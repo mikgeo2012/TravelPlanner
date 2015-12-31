@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="GMapsFX-1.1.2-SNAPSHOT">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/libs/GMapsFX-1.1.2-SNAPSHOT.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
