@@ -34,12 +34,13 @@ public class ItineraryController implements Initializable, MapComponentInitializ
     // Reference to the main application
     private MainApp mainApp;
 
+    private ObservableList<Stop> stopData;
+
     /**
      * The constructor.
      * The constructor is called before the initialize() method.
      */
-    public ItineraryController() {
-    }
+    public ItineraryController() {}
 
 
 
@@ -51,8 +52,8 @@ public class ItineraryController implements Initializable, MapComponentInitializ
     @FXML
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // Initialize the person table with the two columns.
-        //stopNameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
+        // Initialize the person table with the column.
+        stopNameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
 
         mapView.addMapInializedListener(this);
     }
@@ -65,10 +66,12 @@ public class ItineraryController implements Initializable, MapComponentInitializ
      * @param mainApp
      */
     public void setMainApp(MainApp mainApp) {
+        // Set mainApp and get Stops list
         this.mainApp = mainApp;
+        stopData = this.mainApp.getStopData();
 
         // Add observable list data to the table
-        //stopTable.setItems(mainApp.getStopData());
+        stopTable.setItems(stopData);
     }
 
     /**
@@ -77,15 +80,16 @@ public class ItineraryController implements Initializable, MapComponentInitializ
     @Override
     public void mapInitialized() {
         // Get list of stops
-        //ObservableList<Stop> stops = mainApp.getStopData();
+        // ObservableList<Stop> stops = mainApp.getStopData();
         // Get starting stop
-        //Stop start = stops.get(0);
+        // Stop start = stops.get(0);
 
 
-        //Set the initial properties of the map.
+
+        // Set the initial properties of the map.
         MapOptions mapOptions = new MapOptions();
 
-        mapOptions.center(new LatLong(47.606, -122.332))
+        mapOptions.center(new LatLong(39.8282, -98.5795))
                 .mapType(MapTypeIdEnum.ROADMAP)
                 .overviewMapControl(false)
                 .panControl(false)
@@ -93,9 +97,24 @@ public class ItineraryController implements Initializable, MapComponentInitializ
                 .scaleControl(false)
                 .streetViewControl(false)
                 .zoomControl(true)
-                .zoom(12);
+                .zoom(4);
 
         map = mapView.createMap(mapOptions);
+
+
+        // Add Stop markers to map
+        for (Stop s : stopData) {
+            MarkerOptions markerOptions = new MarkerOptions();
+
+            markerOptions.position( s.getStopCoords().makeLatLong() )
+                    .visible(Boolean.TRUE)
+                    .title(s.getName());
+
+            Marker marker = new Marker( markerOptions );
+
+            map.addMarker(marker);
+        }
+
 
     }
 

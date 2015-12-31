@@ -1,5 +1,7 @@
 package planner.model;
 
+import com.lynden.gmapsfx.javascript.object.LatLong;
+
 /**
  * Object holding the coordinates of a Stop
  *
@@ -46,5 +48,9 @@ public class Coords {
 
     public void setY(double y) {
         this.dy = y;
+    }
+
+    public LatLong makeLatLong() {
+        return new LatLong(dx, dy);
     }
 }

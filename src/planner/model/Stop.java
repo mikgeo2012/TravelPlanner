@@ -13,17 +13,17 @@ import javafx.beans.property.StringProperty;
  */
 public class Stop {
     private StringProperty name;
-    private ObjectProperty<LatLong> stopCoords;
+    private ObjectProperty<Coords> stopCoords;
     private StringProperty description;
 
     public Stop() {
         this(null, null, null);
     }
 
-    public Stop(String sName, LatLong stopCoords, String sDescription) {
+    public Stop(String sName, Coords stopCoords, String sDescription) {
         this.name = new SimpleStringProperty(sName);
         this.description = new SimpleStringProperty(sDescription);
-        this.stopCoords = new SimpleObjectProperty<LatLong>(stopCoords);
+        this.stopCoords = new SimpleObjectProperty<Coords>(stopCoords);
     }
 
     public String getName() {
@@ -38,15 +38,15 @@ public class Stop {
         this.name.set(name);
     }
 
-    public LatLong getStopCoords() {
+    public Coords getStopCoords() {
         return stopCoords.get();
     }
 
-    public ObjectProperty<LatLong> stopCoordsProperty() {
+    public ObjectProperty<Coords> stopCoordsProperty() {
         return stopCoords;
     }
 
-    public void setStopCoords(LatLong stopCoords) {
+    public void setStopCoords(Coords stopCoords) {
         this.stopCoords.set(stopCoords);
     }
 
