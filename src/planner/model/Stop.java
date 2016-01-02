@@ -12,30 +12,83 @@ import javafx.beans.property.StringProperty;
  * Created by mikhailgeorge on 12/23/15.
  */
 public class Stop {
-    private StringProperty name;
+    private StringProperty countryName;
+    private StringProperty stateName;
+    private StringProperty cityName;
     private ObjectProperty<Coords> stopCoords;
     private StringProperty description;
 
     public Stop() {
-        this(null, null, null);
+        this(null, null, null, null, null);
     }
 
-    public Stop(String sName, Coords stopCoords, String sDescription) {
-        this.name = new SimpleStringProperty(sName);
-        this.description = new SimpleStringProperty(sDescription);
+    /**
+     * Constructor for stop located in US
+     * @param countryName
+     * @param stateName
+     * @param cityName
+     * @param stopCoords
+     * @param description
+     */
+    public Stop(String countryName, String stateName, String cityName, Coords stopCoords,
+                String description) {
+        this.countryName = new SimpleStringProperty(countryName);
+        this.stateName = new SimpleStringProperty(stateName);
+        this.cityName = new SimpleStringProperty(cityName);
         this.stopCoords = new SimpleObjectProperty<Coords>(stopCoords);
+        this.description = new SimpleStringProperty(description);
     }
 
-    public String getName() {
-        return name.get();
+    /**
+     * Constructor for stop located outside of US
+     * @param countryName
+     * @param cityName
+     * @param stopCoords
+     * @param description
+     */
+    public Stop(String countryName, String cityName, Coords stopCoords,
+                String description) {
+        this.countryName = new SimpleStringProperty(countryName);
+        this.stateName = new SimpleStringProperty("");
+        this.cityName = new SimpleStringProperty(cityName);
+        this.stopCoords = new SimpleObjectProperty<Coords>(stopCoords);
+        this.description = new SimpleStringProperty(description);
     }
 
-    public StringProperty nameProperty() {
-        return name;
+    public String getCountryName() {
+        return countryName.get();
     }
 
-    public void setName(String name) {
-        this.name.set(name);
+    public StringProperty countryNameProperty() {
+        return countryName;
+    }
+
+    public void setCountryName(String countryName) {
+        this.countryName.set(countryName);
+    }
+
+    public String getStateName() {
+        return stateName.get();
+    }
+
+    public StringProperty stateNameProperty() {
+        return stateName;
+    }
+
+    public void setStateName(String stateName) {
+        this.stateName.set(stateName);
+    }
+
+    public String getCityName() {
+        return cityName.get();
+    }
+
+    public StringProperty cityNameProperty() {
+        return cityName;
+    }
+
+    public void setCityName(String cityName) {
+        this.cityName.set(cityName);
     }
 
     public Coords getStopCoords() {

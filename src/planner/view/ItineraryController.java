@@ -38,11 +38,6 @@ public class ItineraryController implements Initializable, MapComponentInitializ
     // Reference to the main application
     private MainApp mainApp;
 
-    private ObservableList<Stop> stopData;
-
-    private ObservableList<Marker> stopMarkers = FXCollections.observableArrayList();
-
-    private ObservableList<Polyline> stopPath = FXCollections.observableArrayList();
 
     /**
      * The constructor.
@@ -61,7 +56,7 @@ public class ItineraryController implements Initializable, MapComponentInitializ
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // Initialize the person table with the column.
-        stopNameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
+        stopNameColumn.setCellValueFactory(cellData -> cellData.getValue().cityNameProperty());
 
         mapView.addMapInializedListener(this);
     }
@@ -76,10 +71,9 @@ public class ItineraryController implements Initializable, MapComponentInitializ
     public void setMainApp(MainApp mainApp) {
         // Set mainApp and get Stops list
         this.mainApp = mainApp;
-        stopData = this.mainApp.getStopData();
 
         // Add observable list data to the table
-        stopTable.setItems(stopData);
+        stopTable.setItems(mainApp.getStopData());
     }
 
     /**
@@ -111,24 +105,24 @@ public class ItineraryController implements Initializable, MapComponentInitializ
 
 
         // Add Stop markers to map
-        for (Stop s : stopData) {
+        for (Stop s : mainApp.getStopData()) {
             MarkerOptions markerOptions = new MarkerOptions();
 
             markerOptions.position(s.getStopCoords().makeLatLong())
                     .visible(Boolean.TRUE)
-                    .title(s.getName());
+                    .title(s.getCityName());
 
             Marker marker = new Marker( markerOptions );
 
             map.addMarker(marker);
-            stopMarkers.add(marker);
+            mainApp.getStopMarkers().add(marker);
         }
 
 
         // Add travel lines to map
-        for (int i = 1; i < stopData.size(); i++) {
-            Stop stop1 = stopData.get(i - 1);
-            Stop stop2 = stopData.get(i);
+        for (int i = 1; i < mainApp.getStopData().size(); i++) {
+            Stop stop1 = mainApp.getStopData().get(i - 1);
+            Stop stop2 = mainApp.getStopData().get(i);
             LatLong[] ary = new LatLong[]{stop1.getStopCoords().makeLatLong(), stop2.getStopCoords().makeLatLong()};
             MVCArray mvc = new MVCArray(ary);
 
@@ -139,7 +133,7 @@ public class ItineraryController implements Initializable, MapComponentInitializ
 
             Polyline poly = new Polyline(polyOpts);
             map.addMapShape(poly);
-            stopPath.add(poly);
+            mainApp.getStopPath().add(poly);
         }
 
     }
@@ -155,10 +149,10 @@ public class ItineraryController implements Initializable, MapComponentInitializ
             stopTable.getItems().remove(selectedIndex);
 
             // Remove stop marker from map
-            Marker deletedStopMarker = stopMarkers.remove(selectedIndex);
+            Marker deletedStopMarker = mainApp.getStopMarkers().remove(selectedIndex);
             map.removeMarker(deletedStopMarker);
 
-            if (!stopPath.isEmpty()) {  // Remove path to deleted stop if path exists
+            if (!mainApp.getStopPath().isEmpty()) {  // Remove path to deleted stop if path exists
                 deletePath(selectedIndex);
             }
         } else {
@@ -174,25 +168,25 @@ public class ItineraryController implements Initializable, MapComponentInitializ
     }
 
     private void deletePath(int index) {
-        if (index == stopMarkers.size() || index == 0) {    // Either end stop deleted
+        if (index == mainApp.getStopMarkers().size() || index == 0) {    // Either end stop deleted
             boolean b = (index != 0);
             if (b) {    // Last stop deleted
-                Polyline deletedPath = stopPath.remove(index - 1);
+                Polyline deletedPath = mainApp.getStopPath().remove(index - 1);
                 map.removeMapShape(deletedPath);
             } else {    // First stop deleted
-                Polyline deletedPath = stopPath.remove(index);
+                Polyline deletedPath = mainApp.getStopPath().remove(index);
                 map.removeMapShape(deletedPath);
             }
         } else {    // Middle stop deleted
             // Delete path lines
-            Polyline deletedPath = stopPath.remove(index);
-            Polyline deletedPath2 = stopPath.remove(index - 1);
+            Polyline deletedPath = mainApp.getStopPath().remove(index);
+            Polyline deletedPath2 = mainApp.getStopPath().remove(index - 1);
             map.removeMapShape(deletedPath);
             map.removeMapShape(deletedPath2);
 
             // Draw new path line
-            Stop stop1 = stopData.get(index - 1);
-            Stop stop2 = stopData.get(index);
+            Stop stop1 = mainApp.getStopData().get(index - 1);
+            Stop stop2 = mainApp.getStopData().get(index);
             LatLong[] ary = new LatLong[]{stop1.getStopCoords().makeLatLong(), stop2.getStopCoords().makeLatLong()};
             MVCArray mvc = new MVCArray(ary);
 
@@ -203,7 +197,20 @@ public class ItineraryController implements Initializable, MapComponentInitializ
 
             Polyline poly = new Polyline(polyOpts);
             map.addMapShape(poly);
-            stopPath.add(index - 1, poly);
+            mainApp.getStopPath().add(index - 1, poly);
+        }
+    }
+
+    /**
+     * Called when the user clicks the new button. Opens a dialog to edit
+     * details for a new person.
+     */
+    @FXML
+    private void handleNewStop() {
+        Stop tempStop = new Stop();
+        boolean okClicked = mainApp.showStopAddDialog(tempStop);
+        if (okClicked) {
+            mainApp.getStopData().add(tempStop);
         }
     }
 
