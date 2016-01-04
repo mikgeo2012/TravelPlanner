@@ -4,7 +4,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="250.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="250.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="planner.view.StopAddDialogController">
    <children>
       <GridPane layoutX="14.0" layoutY="14.0" prefHeight="150.0" prefWidth="374.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="12.0" AnchorPane.topAnchor="14.0">
         <columnConstraints>
@@ -21,17 +21,17 @@
             <Label text="Country" />
             <Label text="State (if USA)" GridPane.rowIndex="1" />
             <Label text="City" GridPane.rowIndex="2" />
-            <TextField GridPane.columnIndex="1" />
-            <TextField GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <TextField GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <TextField fx:id="countryField" GridPane.columnIndex="1" />
+            <TextField fx:id="stateField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField fx:id="cityField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <Label text="Description" GridPane.rowIndex="3" />
-            <TextField GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <TextField fx:id="descriptionField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
          </children>
       </GridPane>
       <HBox layoutX="201.0" layoutY="186.0" prefHeight="36.0" prefWidth="187.0" spacing="50.0" AnchorPane.bottomAnchor="28.0" AnchorPane.rightAnchor="12.0">
          <children>
-            <Button layoutX="200.0" layoutY="192.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="56.0" text="OK" />
-            <Button layoutX="253.0" layoutY="192.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="72.0" text="Cancel" />
+            <Button layoutX="200.0" layoutY="192.0" mnemonicParsing="false" onAction="#handleOk" prefHeight="26.0" prefWidth="56.0" text="OK" />
+            <Button layoutX="253.0" layoutY="192.0" mnemonicParsing="false" onAction="#handleCancel" prefHeight="26.0" prefWidth="72.0" text="Cancel" />
          </children>
       </HBox>
    </children>

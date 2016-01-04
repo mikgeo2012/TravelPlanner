@@ -52,6 +52,7 @@ public class MainApp extends Application {
         stopData.add(new Stop("USA", "TX","Austin", new Coords(30.2672, -97.7432), "Third city"));
         stopData.add(new Stop("USA", "NV","Las Vegas", new Coords(36.1692, -115.1392), "Fourth city"));
         stopData.add(new Stop("USA", "WA","Seattle", new Coords(47.6062, -122.3322), "Ending city"));
+        stopData.add(new Stop());
     }
 
     /**

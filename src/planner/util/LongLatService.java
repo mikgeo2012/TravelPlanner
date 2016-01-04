@@ -27,7 +27,7 @@ public class LongLatService {
 
     public static void main(String[] args) throws Exception {
         LongLatService tDirectionService = new LongLatService();
-        tDirectionService.getLongitudeLatitude("Chicago, IL, USA");
+        tDirectionService.getLongitudeLatitude("London, UK");
         System.out.println(tDirectionService.getLatitude() + " " + tDirectionService.getLongtitude());
     }
 

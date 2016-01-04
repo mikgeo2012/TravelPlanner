@@ -53,4 +53,9 @@ public class Coords {
     public LatLong makeLatLong() {
         return new LatLong(dx, dy);
     }
+
+    @Override
+    public String toString() {
+        return String.format("Lat: %f | Long: %f", dx, dy);
+    }
 }

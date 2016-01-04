@@ -40,7 +40,6 @@ public class ItineraryController implements Initializable, MapComponentInitializ
 
 
     /**
-     * The constructor.
      * The constructor is called before the initialize() method.
      */
     public ItineraryController() {}
@@ -77,7 +76,7 @@ public class ItineraryController implements Initializable, MapComponentInitializ
     }
 
     /**
-     * Initializes the google maps
+     * Initializes the google map and add markers and path lines according to stop table
      */
     @Override
     public void mapInitialized() {
@@ -101,58 +100,48 @@ public class ItineraryController implements Initializable, MapComponentInitializ
                 .zoomControl(true)
                 .zoom(4);
 
+        // Create the map
         map = mapView.createMap(mapOptions);
 
 
         // Add Stop markers to map
+        int index = 0;
         for (Stop s : mainApp.getStopData()) {
-            MarkerOptions markerOptions = new MarkerOptions();
-
-            markerOptions.position(s.getStopCoords().makeLatLong())
-                    .visible(Boolean.TRUE)
-                    .title(s.getCityName());
-
-            Marker marker = new Marker( markerOptions );
-
-            map.addMarker(marker);
-            mainApp.getStopMarkers().add(marker);
+            if (s.getStopCoords() != null) {
+                addMarker(s, index);
+                index++;
+            }
         }
 
 
         // Add travel lines to map
-        for (int i = 1; i < mainApp.getStopData().size(); i++) {
-            Stop stop1 = mainApp.getStopData().get(i - 1);
-            Stop stop2 = mainApp.getStopData().get(i);
-            LatLong[] ary = new LatLong[]{stop1.getStopCoords().makeLatLong(), stop2.getStopCoords().makeLatLong()};
-            MVCArray mvc = new MVCArray(ary);
-
-            PolylineOptions polyOpts = new PolylineOptions()
-                    .path(mvc)
-                    .strokeColor("red")
-                    .strokeWeight(3);
-
-            Polyline poly = new Polyline(polyOpts);
-            map.addMapShape(poly);
-            mainApp.getStopPath().add(poly);
+        for (int i = 0; i < mainApp.getStopData().size() - 1; i++) {
+            Stop stop1 = mainApp.getStopData().get(i);
+            Stop stop2 = mainApp.getStopData().get(i + 1);
+            if (stop2.getStopCoords() != null) {
+                addPathLine(stop1, stop2, i);
+            }
         }
 
     }
 
     /**
-     * Called when the user clicks on the delete button
+     * Called when the user clicks on the delete button. Deletes a stop and respective marker and path lines
      */
     @FXML
     private void handleDeleteStop() {
         int selectedIndex = stopTable.getSelectionModel().getSelectedIndex();
-        if (selectedIndex >= 0) {
+
+        if (selectedIndex >= 0 && mainApp.getStopData().get(selectedIndex).getStopCoords() != null) {
             // Remove stop from table
             stopTable.getItems().remove(selectedIndex);
 
-            // Remove stop marker from map
+            // Remove stop marker from map and marker list
             Marker deletedStopMarker = mainApp.getStopMarkers().remove(selectedIndex);
             map.removeMarker(deletedStopMarker);
 
-            if (!mainApp.getStopPath().isEmpty()) {  // Remove path to deleted stop if path exists
+            // Remove path to deleted stop from map and path list if path exists
+            if (!mainApp.getStopPath().isEmpty()) {
                 deletePath(selectedIndex);
             }
         } else {
@@ -167,6 +156,13 @@ public class ItineraryController implements Initializable, MapComponentInitializ
         }
     }
 
+
+    /**
+     * Delete a path line at a given index when a marker is deleted and create a new path line to the remaining
+     * markers
+     *
+     * @param index
+     */
     private void deletePath(int index) {
         if (index == mainApp.getStopMarkers().size() || index == 0) {    // Either end stop deleted
             boolean b = (index != 0);
@@ -202,17 +198,85 @@ public class ItineraryController implements Initializable, MapComponentInitializ
     }
 
     /**
-     * Called when the user clicks the new button. Opens a dialog to edit
+     * Called when the user clicks the new button. Opens a dialog to add
      * details for a new person.
      */
     @FXML
     private void handleNewStop() {
+        // Index where to add new stop
+        int index = stopTable.getSelectionModel().getSelectedIndex();
+
+        // Open dialog box and add new stop
         Stop tempStop = new Stop();
         boolean okClicked = mainApp.showStopAddDialog(tempStop);
         if (okClicked) {
-            mainApp.getStopData().add(tempStop);
+            mainApp.getStopData().add(index, tempStop);
+            addMarker(tempStop, index);
+            addPathLine(tempStop, index);
         }
     }
 
 
+    /**
+     * Adds a marker to the map and to the marker list for a respective stop s at index
+     * @param s
+     * @param index
+     */
+    private void addMarker(Stop s, int index) {
+        // Specify marker options
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(s.getStopCoords().makeLatLong())
+                .visible(Boolean.TRUE)
+                .title(s.getCityName());
+
+        // Make marker
+        Marker marker = new Marker( markerOptions );
+
+        // Add marker to map and list
+        map.addMarker(marker);
+        mainApp.getStopMarkers().add(index, marker);
+    }
+
+    /**
+     * Adds a path line to the map and the path list for stops s1 and s2 at index
+     * @param s1
+     * @param s2
+     * @param index
+     */
+    private void addPathLine(Stop s1, Stop s2, int index) {
+        LatLong[] ary = new LatLong[]{s1.getStopCoords().makeLatLong(), s2.getStopCoords().makeLatLong()};
+        MVCArray mvc = new MVCArray(ary);
+
+        PolylineOptions polyOpts = new PolylineOptions()
+                .path(mvc)
+                .strokeColor("red")
+                .strokeWeight(3);
+
+        Polyline poly = new Polyline(polyOpts);
+        map.addMapShape(poly);
+        mainApp.getStopPath().add(index, poly);
+    }
+
+
+    private void addPathLine(Stop s, int index) {
+        int pathIndex = index - 1;
+
+        if (index > mainApp.getStopPath().size() || pathIndex < 0) {    // Either end stop added
+            boolean b = (index != 0);
+            if (b) {    // Last stop added
+                addPathLine(mainApp.getStopData().get(index - 1), s, pathIndex);
+            } else {    // First stop deleted
+                addPathLine(s, mainApp.getStopData().get(1), index);
+            }
+        } else { // Stop added in the middle
+            // Remove current path
+            Polyline deletedPath = mainApp.getStopPath().remove(pathIndex);
+            map.removeMapShape(deletedPath);
+
+            // Add updated path to new stop
+            addPathLine(mainApp.getStopData().get(index - 1), s, pathIndex);
+            addPathLine(s, mainApp.getStopData().get(index + 1),  index);
+        }
+
+    }
 }

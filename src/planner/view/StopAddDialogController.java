@@ -80,7 +80,7 @@ public class StopAddDialogController {
             stop.setStateName(stateField.getText());
             stop.setDescription(descriptionField.getText());
             Coords tempCoords = getCoords(countryField.getText(), stateField.getText(), cityField.getText());
-
+            stop.setStopCoords(tempCoords);
             okClicked = true;
             dialogStage.close();
         }
@@ -135,7 +135,14 @@ public class StopAddDialogController {
     }
 
     private Coords getCoords(String country, String state, String city) {
-        String address = city + ", " + state + ", " + country;
+        String address = null;
+
+        if (state == null) { // Outside US
+            address = city + ", " + country;
+        } else { // Inside US
+            address = city + ", " + state + ", " + country;
+        }
+
         LongLatService coords = new LongLatService();
         coords.getLongitudeLatitude(address);
 
