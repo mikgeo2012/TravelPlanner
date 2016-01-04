@@ -2,6 +2,7 @@ package planner.view;
 
 import com.lynden.gmapsfx.GoogleMapView;
 import com.lynden.gmapsfx.MapComponentInitializedListener;
+import com.lynden.gmapsfx.javascript.event.UIEventType;
 import com.lynden.gmapsfx.javascript.object.*;
 import com.lynden.gmapsfx.shapes.Polyline;
 import com.lynden.gmapsfx.shapes.PolylineOptions;
@@ -12,6 +13,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import netscape.javascript.JSObject;
 import planner.MainApp;
 import planner.model.Stop;
 
@@ -123,6 +125,12 @@ public class ItineraryController implements Initializable, MapComponentInitializ
             }
         }
 
+        //Add stop by right clicking on point on map
+        map.addUIEventHandler(UIEventType.rightclick, (JSObject obj) -> {
+            LatLong coords = new LatLong((JSObject) obj.getMember("latLng"));
+            System.out.println(coords);
+        });
+
     }
 
     /**
@@ -219,6 +227,7 @@ public class ItineraryController implements Initializable, MapComponentInitializ
 
     /**
      * Adds a marker to the map and to the marker list for a respective stop s at index
+     *
      * @param s
      * @param index
      */
@@ -235,10 +244,18 @@ public class ItineraryController implements Initializable, MapComponentInitializ
         // Add marker to map and list
         map.addMarker(marker);
         mainApp.getStopMarkers().add(index, marker);
+
+        // Select respective stop when marker is clicked
+        map.addUIEventHandler(marker, UIEventType.click, (JSObject obj) -> {
+            int markerIndex = mainApp.getStopMarkers().indexOf(marker);
+            stopTable.getSelectionModel().select(markerIndex);
+            //mainApp.getStopMarkers().get(markerIndex).setAnimation(Animation.BOUNCE);
+        });
     }
 
     /**
      * Adds a path line to the map and the path list for stops s1 and s2 at index
+     *
      * @param s1
      * @param s2
      * @param index
@@ -258,9 +275,17 @@ public class ItineraryController implements Initializable, MapComponentInitializ
     }
 
 
+    /**
+     * Adds the path lines to the map neccessary to add one stop at a given index
+     * Calls addPathLine(s1, s2) to add paths
+     *
+     * @param s
+     * @param index
+     */
     private void addPathLine(Stop s, int index) {
         int pathIndex = index - 1;
 
+        // pathIndex > mainApp.getStopPath.size should work but doesn't
         if (index > mainApp.getStopPath().size() || pathIndex < 0) {    // Either end stop added
             boolean b = (index != 0);
             if (b) {    // Last stop added
