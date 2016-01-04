@@ -1,5 +1,6 @@
 package planner.util;
 
+import com.lynden.gmapsfx.javascript.object.LatLong;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -7,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
+import planner.model.Coords;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -92,5 +94,12 @@ public class LongLatService {
 
     public double getLongtitude() {
         return longtitude;
+    }
+
+    public Coords getCoords(LatLong latlong) {
+        double dx = latlong.getLatitude();
+        double dy = latlong.getLongitude();
+
+        return new Coords(dx, dy);
     }
 }

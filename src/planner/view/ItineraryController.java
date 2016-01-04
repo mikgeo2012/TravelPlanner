@@ -16,6 +16,7 @@ import javafx.scene.control.TableView;
 import netscape.javascript.JSObject;
 import planner.MainApp;
 import planner.model.Stop;
+import planner.util.LongLatService;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -128,7 +129,7 @@ public class ItineraryController implements Initializable, MapComponentInitializ
         //Add stop by right clicking on point on map
         map.addUIEventHandler(UIEventType.rightclick, (JSObject obj) -> {
             LatLong coords = new LatLong((JSObject) obj.getMember("latLng"));
-            System.out.println(coords);
+            handleNewStop(coords);
         });
 
     }
@@ -224,6 +225,25 @@ public class ItineraryController implements Initializable, MapComponentInitializ
         }
     }
 
+    /**
+     * Called when the user clicks the new button. Opens a dialog to add
+     * details for a new person.
+     */
+    @FXML
+    private void handleNewStop(LatLong coords) {
+        // Index where to add new stop
+        int index = stopTable.getSelectionModel().getSelectedIndex();
+
+        // Open dialog box and add new stop
+        Stop tempStop = new Stop();
+        boolean okClicked = mainApp.showStopAddDialog(tempStop);
+        if (okClicked) {
+            mainApp.getStopData().add(index, tempStop);
+            addMarker(tempStop, index, coords);
+            addPathLine(tempStop, index);
+        }
+    }
+
 
     /**
      * Adds a marker to the map and to the marker list for a respective stop s at index
@@ -235,6 +255,39 @@ public class ItineraryController implements Initializable, MapComponentInitializ
         // Specify marker options
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(s.getStopCoords().makeLatLong())
+                .visible(Boolean.TRUE)
+                .title(s.getCityName());
+
+        // Make marker
+        Marker marker = new Marker( markerOptions );
+
+        // Add marker to map and list
+        map.addMarker(marker);
+        mainApp.getStopMarkers().add(index, marker);
+
+        // Select respective stop when marker is clicked
+        map.addUIEventHandler(marker, UIEventType.click, (JSObject obj) -> {
+            int markerIndex = mainApp.getStopMarkers().indexOf(marker);
+            stopTable.getSelectionModel().select(markerIndex);
+            //mainApp.getStopMarkers().get(markerIndex).setAnimation(Animation.BOUNCE);
+        });
+    }
+
+    /**
+     * Adds a marker to the map and to the marker list for a respective stop s at index with given LatLong cordinates
+     *
+     * @param s
+     * @param index
+     * @param coords
+     */
+    private void addMarker(Stop s, int index, LatLong coords) {
+        // Set stop coordinates
+        LongLatService tempLongLat = new LongLatService();
+        s.setStopCoords(tempLongLat.getCoords(coords));
+
+        // Specify marker options
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(coords)
                 .visible(Boolean.TRUE)
                 .title(s.getCityName());
 
@@ -302,6 +355,5 @@ public class ItineraryController implements Initializable, MapComponentInitializ
             addPathLine(mainApp.getStopData().get(index - 1), s, pathIndex);
             addPathLine(s, mainApp.getStopData().get(index + 1),  index);
         }
-
     }
 }
