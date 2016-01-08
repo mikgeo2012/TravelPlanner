@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import com.lynden.gmapsfx.*?>
 
-<AnchorPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="planner.view.StopItineraryController">
     <children>
         <SplitPane dividerPositions="0.24276169265033407" layoutX="200.0" layoutY="120.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <items>
@@ -15,9 +15,9 @@
                             <items>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                                     <children>
-                                        <TableView prefHeight="294.0" prefWidth="212.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                        <TableView fx:id="destTable" prefHeight="294.0" prefWidth="212.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                             <columns>
-                                                <TableColumn editable="false" prefWidth="75.0" sortable="false" text="Start" />
+                                                <TableColumn fx:id="destNameColumn" editable="false" prefWidth="75.0" sortable="false" text="Start" />
                                             </columns>
                                             <columnResizePolicy>
                                                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -27,8 +27,8 @@
                                 </AnchorPane>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                                     <children>
-                                        <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false"  text="Add..." AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="14.0" />
-                                        <Button layoutX="140.0" layoutY="14.0" mnemonicParsing="false" text="Delete" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0" />
+                                        <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" text="Add..." AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="14.0" />
+                                        <Button layoutX="140.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleDeleteDest" text="Delete" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0" />
                                     </children></AnchorPane>
                             </items>
                         </SplitPane>

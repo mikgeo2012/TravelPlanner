@@ -14,9 +14,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import planner.model.Coords;
+import planner.model.Dest;
 import planner.model.Stop;
+import planner.view.DestAddDialogController;
 import planner.view.ItineraryController;
 import planner.view.StopAddDialogController;
+import planner.view.StopItineraryController;
 
 
 import java.io.IOException;
@@ -28,6 +31,7 @@ public class MainApp extends Application {
 
     private Stage primaryStage;
     private BorderPane rootLayout;
+
 
     /**
      * The data as an observable list of Stops.
@@ -53,7 +57,12 @@ public class MainApp extends Application {
         stopData.add(new Stop("USA", "NV","Las Vegas", new Coords(36.1692, -115.1392), "Fourth city"));
         stopData.add(new Stop("USA", "WA","Seattle", new Coords(47.6062, -122.3322), "Ending city"));
         stopData.add(new Stop());
+
+        stopData.get(1).getDestData().add(new Dest("Wrigley Field", new Coords(41.9481, -87.6556), "First dest"));
+        stopData.get(1).getDestData().add(new Dest("Chinatown", new Coords(41.8532, -87.6370), "Second dest"));
+        stopData.get(1).getDestData().add(new Dest());
     }
+
 
     /**
      * Returns the data as an observable list of Stops.
@@ -79,6 +88,7 @@ public class MainApp extends Application {
         return stopPath;
     }
 
+
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -88,6 +98,7 @@ public class MainApp extends Application {
 
         showItinerary();
     }
+
 
     /**
      * Initializes the root layout.
@@ -110,6 +121,7 @@ public class MainApp extends Application {
         }
     }
 
+
     /**
      * Show Itinerary view inside root layout
      */
@@ -121,7 +133,7 @@ public class MainApp extends Application {
                     .getResource("view/Itinerary.fxml"));
             AnchorPane itinerary = (AnchorPane) loader.load();
 
-            // Set person overview into the center of root layout.
+            // Set itinerary overview into the center of root layout.
             rootLayout.setCenter(itinerary);
 
             // Give the controller access to the main app.
@@ -133,6 +145,12 @@ public class MainApp extends Application {
     }
 
 
+    /**
+     * Called when "Add" button is clicked or a location is clicked on the map. Displays "Add Stop" dialog
+     *
+     * @param stop
+     * @return
+     */
     public boolean showStopAddDialog(Stop stop) {
         try {
             // Load the fxml file and create a new stage for the popup dialog.
@@ -152,6 +170,69 @@ public class MainApp extends Application {
             StopAddDialogController controller = loader.getController();
             controller.setDialogStage(dialogStage);
             controller.setStop(stop);
+
+            // Show the dialog and wait until the user closes it
+            dialogStage.showAndWait();
+
+            return controller.isOkClicked();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+    /**
+     * Called when a stop is double clicked in the itinerary. Displays the Stop itinerary
+     *
+     * @param stop
+     */
+    public void showStopItinerary(Stop stop) {
+        try {
+            // Load stop itinerary layout from fxml file.
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class
+                    .getResource("view/StopItinerary.fxml"));
+            AnchorPane stopItinerary = (AnchorPane) loader.load();
+
+            // Set stop itinerary overview into the center of root layout.
+            rootLayout.setCenter(stopItinerary);
+
+            // Give the controller access to the main app.
+            StopItineraryController controller = loader.getController();
+            controller.setMainApp(this);
+            controller.setStop(stop);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * Called when a location is clicked on the map. Displays "Add Destination" dialog
+     *
+     * @param dest
+     * @return
+     */
+    public boolean showDestAddDialog(Dest dest) {
+        try {
+            // Load the fxml file and create a new stage for the popup dialog.
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource("view/DestAddDialog.fxml"));
+            AnchorPane page = (AnchorPane) loader.load();
+
+            // Create the dialog Stage.
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Add Destination");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(primaryStage);
+            Scene scene = new Scene(page);
+            dialogStage.setScene(scene);
+
+            // Set the stop into the controller.
+            DestAddDialogController controller = loader.getController();
+            controller.setDialogStage(dialogStage);
+            controller.setDest(dest);
 
             // Show the dialog and wait until the user closes it
             dialogStage.showAndWait();

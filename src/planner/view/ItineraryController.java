@@ -12,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import netscape.javascript.JSObject;
 import planner.MainApp;
@@ -61,6 +62,18 @@ public class ItineraryController implements Initializable, MapComponentInitializ
     public void initialize(URL url, ResourceBundle rb) {
         // Initialize the person table with the column.
         stopNameColumn.setCellValueFactory(cellData -> cellData.getValue().cityNameProperty());
+
+        // If Stop in table is double clicked, Stop itinerary opens
+        stopTable.setRowFactory(tv -> {
+            TableRow<Stop> row = new TableRow<Stop>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && (!row.isEmpty())) {
+                    Stop stop = row.getItem();
+                    mainApp.showStopItinerary(stop);
+                }
+            });
+            return row;
+        });
 
         mapView.addMapInializedListener(this);
     }
@@ -210,7 +223,7 @@ public class ItineraryController implements Initializable, MapComponentInitializ
 
     /**
      * Called when the user clicks the new button. Opens a dialog to add
-     * details for a new person.
+     * details for a new stop.
      */
     @FXML
     private void handleNewStop() {
@@ -228,8 +241,8 @@ public class ItineraryController implements Initializable, MapComponentInitializ
     }
 
     /**
-     * Called when the user clicks the new button. Opens a dialog to add
-     * details for a new person.
+     * Called when the user clicks on a location on the map. Opens a dialog to add
+     * details for a new stop.
      */
     @FXML
     private void handleNewStop(LatLong coords) {

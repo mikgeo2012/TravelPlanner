@@ -1,6 +1,8 @@
 package planner.model;
 
 import com.lynden.gmapsfx.javascript.object.LatLong;
+import com.lynden.gmapsfx.javascript.object.Marker;
+import com.lynden.gmapsfx.shapes.Polyline;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -19,8 +21,20 @@ public class Stop extends Location {
     private StringProperty stateName;
     private StringProperty cityName;
 
-    // List of destinations at the stop
+    /**
+     * The data as an observable list of destinations of stops
+     */
     private ObservableList<Dest> destData = FXCollections.observableArrayList();
+
+    /**
+     * The data as an observable list of Markers of destinations
+     */
+    private ObservableList<Marker> destMarkers = FXCollections.observableArrayList();
+
+    /**
+     * The data as an observable list of polylines of the travel path
+     */
+    private ObservableList<Polyline> destPath = FXCollections.observableArrayList();
 
 
     public Stop() {
@@ -101,7 +115,11 @@ public class Stop extends Location {
         return destData;
     }
 
-    public void setDestData(ObservableList<Dest> destData) {
-        this.destData = destData;
+    public ObservableList<Marker> getDestMarkers() {
+        return destMarkers;
+    }
+
+    public ObservableList<Polyline> getDestPath() {
+        return destPath;
     }
 }
