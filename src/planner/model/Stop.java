@@ -5,22 +5,28 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 /**
- * Model class for a Stop
+ * Model class for a Stop in the itinerary which builds on the Location base
+ * An itinerary is made up of multiple Stops
  *
  * Created by mikhailgeorge on 12/23/15.
  */
-public class Stop {
+public class Stop extends Location {
     private StringProperty countryName;
     private StringProperty stateName;
     private StringProperty cityName;
-    private ObjectProperty<Coords> stopCoords;
-    private StringProperty description;
+
+    // List of destinations at the stop
+    private ObservableList<Dest> destData = FXCollections.observableArrayList();
+
 
     public Stop() {
         this(null, null, null, null, null);
     }
+
 
     /**
      * Constructor for stop located in US
@@ -32,12 +38,12 @@ public class Stop {
      */
     public Stop(String countryName, String stateName, String cityName, Coords stopCoords,
                 String description) {
+        super(stopCoords, description);
         this.countryName = new SimpleStringProperty(countryName);
         this.stateName = new SimpleStringProperty(stateName);
         this.cityName = new SimpleStringProperty(cityName);
-        this.stopCoords = new SimpleObjectProperty<Coords>(stopCoords);
-        this.description = new SimpleStringProperty(description);
     }
+
 
     /**
      * Constructor for stop located outside of US
@@ -48,12 +54,12 @@ public class Stop {
      */
     public Stop(String countryName, String cityName, Coords stopCoords,
                 String description) {
+        super(stopCoords, description);
         this.countryName = new SimpleStringProperty(countryName);
         this.stateName = new SimpleStringProperty("");
         this.cityName = new SimpleStringProperty(cityName);
-        this.stopCoords = new SimpleObjectProperty<Coords>(stopCoords);
-        this.description = new SimpleStringProperty(description);
     }
+
 
     public String getCountryName() {
         return countryName.get();
@@ -91,27 +97,11 @@ public class Stop {
         this.cityName.set(cityName);
     }
 
-    public Coords getStopCoords() {
-        return stopCoords.get();
+    public ObservableList<Dest> getDestData() {
+        return destData;
     }
 
-    public ObjectProperty<Coords> stopCoordsProperty() {
-        return stopCoords;
-    }
-
-    public void setStopCoords(Coords stopCoords) {
-        this.stopCoords.set(stopCoords);
-    }
-
-    public String getDescription() {
-        return description.get();
-    }
-
-    public StringProperty descriptionProperty() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description.set(description);
+    public void setDestData(ObservableList<Dest> destData) {
+        this.destData = destData;
     }
 }

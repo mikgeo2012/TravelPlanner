@@ -23,6 +23,8 @@ import java.util.ResourceBundle;
 
 
 /**
+ * Controller for the main Itinerary page
+ *
  * Created by mikhailgeorge on 12/23/15.
  */
 public class ItineraryController implements Initializable, MapComponentInitializedListener {

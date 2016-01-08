@@ -148,7 +148,7 @@ public class MainApp extends Application {
             Scene scene = new Scene(page);
             dialogStage.setScene(scene);
 
-            // Set the person into the controller.
+            // Set the stop into the controller.
             StopAddDialogController controller = loader.getController();
             controller.setDialogStage(dialogStage);
             controller.setStop(stop);
